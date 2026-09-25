@@ -13,6 +13,7 @@ Interfaces: Emisión de certificados digitales (`Certificable`) en talleres y cu
 Generics y Wildcards: Métodos genéricos para filtrado de actividades y cálculo flexible de costos.
 
 Clases Anidadas y Concurrencia: Generación de tickets de acceso e implementación de un hilo secundario (`EnvioTicketsThread`) para envíos masivos.
+
 ---
 Ejecución del Programa:
 <img width="677" height="716" alt="mi ejecucion" src="https://github.com/user-attachments/assets/2bfc8c23-c77b-4253-9eb4-e08ac5fbd3a8" />
