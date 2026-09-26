@@ -1,7 +1,16 @@
+package modelo;
+
+import modelo.actividades.Actividad;
+import modelo.actividades.Charla;
+import modelo.actividades.Taller;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventoUniversitario {
+public class EventoUniversitario implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final String id;
     private String titulo;
     private double costoBase;
@@ -11,7 +20,7 @@ public class EventoUniversitario {
     private Sala sala;
     private List<Actividad> actividades;
 
-    // Constructor principal
+    // constructor principal
     public EventoUniversitario(String id, String titulo, double costoBase, boolean gratuito) {
         this.id = id;
         this.titulo = titulo;
@@ -21,7 +30,7 @@ public class EventoUniversitario {
         cantidadEventos++;
     }
 
-    // Constructor de copia
+    // constructor de copia
     public EventoUniversitario(EventoUniversitario otro) {
         this.id = otro.id + "_copia";
         this.titulo = otro.titulo + " (Copia)";
@@ -47,6 +56,9 @@ public class EventoUniversitario {
         this.sala = sala;
     }
 
+    public void agregarActividad(Actividad actividad) {
+        this.actividades.add(actividad);
+    }
 
     public void crearActividad(int id, String titulo, int cupo, String tipo, String datoExtra) {
         if (tipo.equalsIgnoreCase("Charla")) {
@@ -57,6 +69,47 @@ public class EventoUniversitario {
         }
     }
 
+    public <T extends Actividad> List<T> filtrarActividadesPorTipo(Class<T> tipo) {
+        List<T> filtradas = new ArrayList<>();
+        for (Actividad act : actividades) {
+            if (tipo.isInstance(act)) {
+                filtradas.add(tipo.cast(act));
+            }
+        }
+        return filtradas;
+    }
+
+    public double calcularCostoMateriales(List<? extends Actividad> listaActividades) {
+        double costoTotal = 0;
+        for (Actividad act : listaActividades) {
+            costoTotal += act.calcularCostoMateriales();
+        }
+        return costoTotal;
+    }
+
+    public boolean persistirEvento() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("evento_" + id + ".ser"))) {
+            oos.writeObject(this);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error de I/O al guardar el evento " + id + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static EventoUniversitario recuperarEvento(String id) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("evento_" + id + ".ser"))) {
+            return (EventoUniversitario) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.err.println("El archivo del evento no existe en disco.");
+        } catch (IOException e) {
+            System.err.println("Error de entrada/salida al leer el archivo: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error de compatibilidad de clase al deserializar: " + e.getMessage());
+        }
+        return null;
+    }
+
     public void mostrarDatos() {
         System.out.println("==========================================");
         System.out.println("Evento ID: " + id + " | Título: " + titulo);
@@ -65,7 +118,7 @@ public class EventoUniversitario {
         System.out.println("Sala Asignada: " + (sala != null ? sala.getNombre() : "Sin Asignar"));
         System.out.println("--- Actividades Registradas ---");
         for (Actividad act : actividades) {
-            act.mostrarIdentificacion(); // Uso polimórfico del método final
+            act.mostrarIdentificacion();
         }
         System.out.println("==========================================");
     }
@@ -76,5 +129,13 @@ public class EventoUniversitario {
 
     public List<Actividad> getActividades() {
         return actividades;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
     }
 }

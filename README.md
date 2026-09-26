@@ -3,12 +3,12 @@ Este repositorio contiene la solución del Trabajo Práctico N° 1. El objetivo 
 Conceptos de POO Aplicados:
 
 Encapsulamiento: control de acceso a datos mediante calificadores (private, public, final).
-Herencia y clases abstractas: la clase base Actividad define comportamientos genéricos compartidos por las subclases Charla y Taller.
+Herencia y clases abstractas: la clase base modelo.actividad.Actividad define comportamientos genéricos compartidos por las subclases modelo.actividad.Charla y modelo.actividad.Taller.
 Polimorfismo: tratamiento unificado de diferentes tipos de actividades al calcular costos y mostrar identificaciones dinámicamente.
 Relaciones entre objetos:
-Asociación / Inscripción: entre Actividad, Inscripcion y Estudiante.
-Agregación: la clase Sala existe de forma independiente a EventoUniversitario.
-Composición: las actividades forman parte de la vida útil del EventoUniversitario.
+Asociación / Inscripción: entre modelo.actividad.Actividad, modelo.Inscripcion y modelo.Estudiante.
+Agregación: la clase modelo.Sala existe de forma independiente a modelo.EventoUniversitario.
+Composición: las actividades forman parte de la vida útil del modelo.EventoUniversitario.
 
 
 IMAGENES:

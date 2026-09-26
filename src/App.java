@@ -1,46 +1,67 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-import java.util.ArrayList;
+import excepciones.CupoExcedidoException;
+import hilos.EnvioTicketsThread;
+import modelo.Estudiante;
+import modelo.EventoUniversitario;
+import modelo.Sala;
+import modelo.actividades.Actividad;
+import modelo.actividades.Charla;
+import modelo.actividades.Curso;
+import modelo.actividades.Taller;
+import certificacion.Certificable;
+
 import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-        //Creación de estudiantes
-        List<Estudiante> estudiantes = new ArrayList<>();
+        // Datos de prueba
         Estudiante est1 = new Estudiante("53535", "Ana Gómez");
         Estudiante est2 = new Estudiante("50333", "Carlos López");
-        Estudiante est3 = new Estudiante("50232", "Sofía Rodríguez");
-        estudiantes.add(est1);
-        estudiantes.add(est2);
-        estudiantes.add(est3);
 
-        //Creación del evento
-        EventoUniversitario evento = new EventoUniversitario("EVT-01", "Jornada de IA y Desarrollo", 10000.0, false);
-
-        //Asignación de sala
-        Sala sala1 = new Sala(101, "Aula Magna - Bloque A");
+        EventoUniversitario evento = new EventoUniversitario("EVT-1", "Programación 1", 0.0, true);
+        Sala sala1 = new Sala(1, "Sala 1");
         evento.asignarSala(sala1);
 
-        //Creación de actividades
-        evento.crearActividad(1, "Introducción a Deep Learning", 30, "Charla", "Dr. Pérez");
-        evento.crearActividad(2, "Taller Práctico de Java", 20, "Taller", "true");
+        // Crear actividades
+        Charla charla = new Charla(1, "Bases de la programación", 10, "Dr. Pérez");
+        Taller taller = new Taller(2, "Taller de Java", 1, true); // Cupo 1
 
-        // Inscripción de estudiantes
-        Actividad charla = evento.getActividades().get(0);
-        Actividad taller = evento.getActividades().get(1);
+        evento.agregarActividad(charla);
+        evento.agregarActividad(taller);
 
-        charla.inscribir(est1);
-        charla.inscribir(est2);
+        // Inscripciones y manejo de excepcion
+        try {
+            charla.inscribir(est1);
+            taller.inscribir(est1);
+            taller.inscribir(est2); // Lanza excepcion por cupo
+        } catch (CupoExcedidoException e) {
+            System.out.println("Error al inscribir: " + e.getMessage());
+        }
 
-        taller.inscribir(est2);
-        taller.inscribir(est3);
+        // Probar Hilo
+        EnvioTicketsThread hilo = new EnvioTicketsThread(evento);
+        hilo.start();
+        try {
+            hilo.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        // Guardar en archivo
+        if (evento.persistirEvento()) {
+            System.out.println("Se grabo correctamente\n");
+        }
+
+        // Mostrar datos del evento actual
+        System.out.println("DATOS DEL EVENTO");
         evento.mostrarDatos();
 
-        System.out.println("\n--- Detalle de Inscripciones ---");
-        charla.mostrarInscripciones();
-        taller.mostrarInscripciones();
-
-        System.out.println("\nTotal de eventos universitarios creados en el sistema: " + EventoUniversitario.getCantidadEventos());
+        // Recuperar evento
+        System.out.println("\nDatos del evento recuperado desde archivo:");
+        EventoUniversitario recuperado = EventoUniversitario.recuperarEvento("EVT-1");
+        if (recuperado != null) {
+            recuperado.mostrarDatos();
+        }
     }
 }

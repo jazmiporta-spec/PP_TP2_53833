@@ -1,4 +1,7 @@
+package modelo.actividades;
+
 public class Charla extends Actividad {
+    private static final long serialVersionUID = 1L;
     private String disertante;
 
     public Charla(int id, String titulo, int cupoMaximo, String disertante) {
@@ -8,7 +11,7 @@ public class Charla extends Actividad {
 
     @Override
     public double calcularCostoMateriales() {
-        return 0.0;
+        return 1500.00; //costo estimado de presentación
     }
 
     @Override
@@ -19,5 +22,4 @@ public class Charla extends Actividad {
     public String getDisertante() {
         return disertante;
     }
-
 }
